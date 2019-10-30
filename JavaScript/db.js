@@ -142,9 +142,9 @@ class Cursor {
 }
 
 class Database {
-  constructor(databaseName) {
-    if (databaseName) config.database = databaseName;
-    this.pool = new Pool(config);
+  constructor(parameters) {
+    const cfg = Object.assign(config, parameters);
+    this.pool = new Pool(cfg);
   }
 
   query(sql, values, callback) {
@@ -153,7 +153,8 @@ class Database {
       values = [];
     }
     const startTime = new Date().getTime();
-    console.log({ sql, values });
+    console.log(sql);
+    if (values) console.log({ values });
     this.pool.query(sql, values, (err, res) => {
       const endTime = new Date().getTime();
       const executionTime = endTime - startTime;
@@ -162,8 +163,12 @@ class Database {
       if (err) console.log(err.message);
       else console.log('Done');
 
-      if (callback) callback(err, res);
-      else this.pool.end();
+      if (callback) {
+        callback(err, res);
+        return;
+      }
+      if (res.rows) console.table(res.rows);
+      this.pool.end();
     });
   }
 
@@ -176,4 +181,4 @@ class Database {
   }
 }
 
-module.exports = databaseName => new Database(databaseName);
+module.exports = (parameters = {}) => new Database(parameters);
