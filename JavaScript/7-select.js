@@ -1,5 +1,5 @@
 'use strict';
 
-const db = require('./db.js')('application');
+const db = require('./db.js')();
 
 db.query('SELECT * FROM SystemUser');
