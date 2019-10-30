@@ -142,7 +142,8 @@ class Cursor {
 }
 
 class Database {
-  constructor() {
+  constructor(databaseName) {
+    if (databaseName) config.database = databaseName;
     this.pool = new Pool(config);
   }
 
@@ -175,4 +176,4 @@ class Database {
   }
 }
 
-module.exports = new Database();
+module.exports = databaseName => new Database(databaseName);
