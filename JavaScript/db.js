@@ -3,7 +3,7 @@
 const { Pool } = require('pg');
 const config = require('./config.js');
 
-const where = conditions => {
+const where = (conditions) => {
   let clause = '';
   const args = [];
   let i = 1;
