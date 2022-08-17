@@ -42,11 +42,13 @@ const where = (conditions) => {
   return { clause, args };
 };
 
-const MODE_ROWS = 0;
-const MODE_VALUE = 1;
-const MODE_ROW = 2;
-const MODE_COL = 3;
-const MODE_COUNT = 4;
+const MODE = {
+  ROWS: 0,
+  VALUE: 1,
+  ROW: 2,
+  COL: 3,
+  COUNT: 4
+};
 
 class Cursor {
   constructor(database, table) {
@@ -56,7 +58,7 @@ class Cursor {
     this.rows = null;
     this.rowCount = 0;
     this.ready = false;
-    this.mode = MODE_ROWS;
+    this.mode = MODE.ROWS;
     this.whereClause = undefined;
     this.columns = ['*'];
     this.args = [];
@@ -83,23 +85,23 @@ class Cursor {
   }
 
   value() {
-    this.mode = MODE_VALUE;
+    this.mode = MODE.VALUE;
     return this;
   }
 
   row() {
-    this.mode = MODE_ROW;
+    this.mode = MODE.ROW;
     return this;
   }
 
   col(name) {
-    this.mode = MODE_COL;
+    this.mode = MODE.COL;
     this.columnName = name;
     return this;
   }
 
   count() {
-    this.mode = MODE_COUNT;
+    this.mode = MODE.COUNT;
     return this;
   }
 
@@ -119,19 +121,19 @@ class Cursor {
     this.database.query(sql, args,  (err, res) => {
       this.resolve(res);
       const { rows, cols } = this;
-      if (mode === MODE_VALUE) {
+      if (mode === MODE.VALUE) {
         const col = cols[0];
         const row = rows[0];
         callback(row[col.name]);
-      } else if (mode === MODE_ROW) {
+      } else if (mode === MODE.ROW) {
         callback(rows[0]);
-      } else if (mode === MODE_COL) {
+      } else if (mode === MODE.COL) {
         const col = [];
         for (const row of rows) {
           col.push(row[columnName]);
         }
         callback(col);
-      } else if (mode === MODE_COUNT) {
+      } else if (mode === MODE.COUNT) {
         callback(this.rowCount);
       } else {
         callback(rows);
